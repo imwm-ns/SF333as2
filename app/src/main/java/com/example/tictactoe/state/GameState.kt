@@ -8,6 +8,7 @@ data class GameState(
     val currentTurn: BoardCellValue = BoardCellValue.CIRCLE,
     val victoryType: VictoryType = VictoryType.NONE,
     val hasWon: Boolean = false,
+    val hasDraw: Boolean = false,
 )
 
 enum class BoardCellValue {

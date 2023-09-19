@@ -185,7 +185,7 @@ fun GameScreen(
                     containerColor = BlueCustom,
                     contentColor = Color.White
                 ),
-                enabled = state.hasWon
+                enabled = state.hasWon || state.hasDraw
             ) {
                 Text(
                     text = "Play Again.",
