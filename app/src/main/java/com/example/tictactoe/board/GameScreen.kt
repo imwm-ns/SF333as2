@@ -184,7 +184,8 @@ fun GameScreen(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = BlueCustom,
                     contentColor = Color.White
-                )
+                ),
+                enabled = state.hasWon
             ) {
                 Text(
                     text = "Play Again.",
