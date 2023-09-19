@@ -62,7 +62,8 @@ class GameViewModel: ViewModel() {
             } else if (hasBoardFull()) {
                 state.copy(
                     hintText = "Game Draw.",
-                    drawCount = state.drawCount + 1
+                    drawCount = state.drawCount + 1,
+                    hasDraw = true,
                 )
             } else {
                 state.copy(
@@ -82,7 +83,8 @@ class GameViewModel: ViewModel() {
             } else if (hasBoardFull()) {
                 state.copy(
                     hintText = "Game Draw.",
-                    drawCount = state.drawCount + 1
+                    drawCount = state.drawCount + 1,
+                    hasDraw = true,
                 )
             } else {
                 state.copy(
