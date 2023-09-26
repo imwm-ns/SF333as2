@@ -8,6 +8,3 @@ https://github.com/imwm-ns/SF333as2/assets/87740579/345086c2-1e7e-490e-b38d-edd2
   **Description:** <br>&emsp;
     This is a Tic Tac Toe Game. We created the game using Kotlin and Jetpack Compose. We set a human player as a O and computer player as a X. We hope you will enjoy playing the game. 
     🐳 ✨ 🎲  <br>
-
-  **Game Demo:** <br> &emsp;
-Uploading Tic-Tac-Toe-Game-Demo.mov…
