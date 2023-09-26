@@ -9,10 +9,10 @@ import com.example.tictactoe.state.BoardCellValue
 import com.example.tictactoe.state.GameState
 import com.example.tictactoe.state.VictoryType
 
-class GameViewModel: ViewModel() {
+class GameViewModel : ViewModel() {
     var state by mutableStateOf(GameState())
 
-    var boardItems:MutableMap<Int, BoardCellValue> = mutableMapOf(
+    var boardItems: MutableMap<Int, BoardCellValue> = mutableMapOf(
         1 to BoardCellValue.NONE,
         2 to BoardCellValue.NONE,
         3 to BoardCellValue.NONE,
@@ -37,10 +37,10 @@ class GameViewModel: ViewModel() {
     }
 
     private fun gameReset() {
-        boardItems.forEach{(i, _) ->
+        boardItems.forEach { (i, _) ->
             boardItems[i] = BoardCellValue.NONE
         }
-        if (state.hintText === "Player 'O' Won.") {
+        if (state.hintText === "Player 'O' Won." || state.hasDraw) {
             state = state.copy(
                 hintText = "Player 'O' turn.",
                 currentTurn = BoardCellValue.CIRCLE,
@@ -56,7 +56,72 @@ class GameViewModel: ViewModel() {
                 hasWon = false,
                 hasDraw = false,
             )
+            makeCrossComputerMove()
         }
+    }
+
+    private fun canCrossWin(boardValue: BoardCellValue): Boolean {
+        boardItems.forEach { (i, _) ->
+            if (boardItems[i] === BoardCellValue.NONE) {
+                boardItems[i] = BoardCellValue.CROSS
+                if (checkForVictory(BoardCellValue.CROSS)) {
+                    state = state.copy(
+                        hintText = "Player 'X' Won.",
+                        currentTurn = BoardCellValue.NONE,
+                        playerCrossCount = state.playerCrossCount + 1,
+                        hasWon = true
+                    )
+                    return true
+                }
+                boardItems[i] = BoardCellValue.NONE
+            }
+        }
+        return false
+    }
+
+    private fun blockCircleIfCanWin(boardValue: BoardCellValue): Boolean {
+        boardItems.forEach { (i, _) ->
+            if (boardItems[i] === BoardCellValue.NONE) {
+                boardItems[i] = BoardCellValue.CIRCLE
+                if (checkForVictory(BoardCellValue.CIRCLE)) {
+                    boardItems[i] = BoardCellValue.CROSS
+                    state = state.copy(
+                        hintText = "Player 'O' turn.",
+                        currentTurn = BoardCellValue.CIRCLE,
+                    )
+                    return true
+                }
+                boardItems[i] = BoardCellValue.NONE
+            }
+        }
+        return false
+    }
+
+    private fun makeCrossComputerMove() {
+        // Check if 'X' can win in next move.
+        if (canCrossWin(BoardCellValue.CROSS)) return
+        // Check if 'O' can win then 'X' should block it.
+        if (blockCircleIfCanWin(BoardCellValue.CIRCLE)) return
+        // Try to place 'X' in a center of the board.
+        if (boardItems[5] === BoardCellValue.NONE) {
+            boardItems[5] = BoardCellValue.CROSS
+            state = state.copy(
+                hintText = "Player 'O' turn.",
+                currentTurn = BoardCellValue.CIRCLE,
+            )
+            return
+        }
+        // Try to random and place sign in the board.
+        val emptyCells = boardItems.filter { it.value === BoardCellValue.NONE }.keys
+        if (emptyCells.isEmpty()) {
+            return
+        }
+        val index = emptyCells.random()
+        boardItems[index] = BoardCellValue.CROSS
+        state = state.copy(
+            hintText = "Player 'O' turn.",
+            currentTurn = BoardCellValue.CIRCLE,
+        )
     }
 
     private fun addValueToBoard(cellNo: Int) {
@@ -104,6 +169,9 @@ class GameViewModel: ViewModel() {
                 )
             }
         }
+        if (!hasBoardFull() && state.currentTurn === BoardCellValue.CROSS) {
+            makeCrossComputerMove()
+        }
     }
 
     private fun checkForVictory(boardValue: BoardCellValue): Boolean {
@@ -112,30 +180,37 @@ class GameViewModel: ViewModel() {
                 state = state.copy(victoryType = VictoryType.HORIZONTAL1)
                 return true
             }
+
             boardItems[4] === boardValue && boardItems[5] === boardValue && boardItems[6] === boardValue -> {
                 state = state.copy(victoryType = VictoryType.HORIZONTAL2)
                 return true
             }
+
             boardItems[7] === boardValue && boardItems[8] === boardValue && boardItems[9] === boardValue -> {
                 state = state.copy(victoryType = VictoryType.HORIZONTAL3)
                 return true
             }
+
             boardItems[1] === boardValue && boardItems[4] === boardValue && boardItems[7] === boardValue -> {
                 state = state.copy(victoryType = VictoryType.VERTICAL1)
                 return true
             }
+
             boardItems[2] === boardValue && boardItems[5] === boardValue && boardItems[8] === boardValue -> {
                 state = state.copy(victoryType = VictoryType.VERTICAL2)
                 return true
             }
+
             boardItems[3] === boardValue && boardItems[6] === boardValue && boardItems[9] === boardValue -> {
                 state = state.copy(victoryType = VictoryType.VERTICAL3)
                 return true
             }
+
             boardItems[1] === boardValue && boardItems[5] === boardValue && boardItems[9] === boardValue -> {
                 state = state.copy(victoryType = VictoryType.DIAGONAL1)
                 return true
             }
+
             boardItems[3] === boardValue && boardItems[5] === boardValue && boardItems[7] === boardValue -> {
                 state = state.copy(victoryType = VictoryType.DIAGONAL2)
                 return true
