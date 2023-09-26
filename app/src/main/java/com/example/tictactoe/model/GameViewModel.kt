@@ -40,12 +40,23 @@ class GameViewModel: ViewModel() {
         boardItems.forEach{(i, _) ->
             boardItems[i] = BoardCellValue.NONE
         }
-        state = state.copy(
-            hintText = "Player 'O' turn.",
-            currentTurn = BoardCellValue.CIRCLE,
-            victoryType = VictoryType.NONE,
-            hasWon = false,
-        )
+        if (state.hintText === "Player 'O' Won.") {
+            state = state.copy(
+                hintText = "Player 'O' turn.",
+                currentTurn = BoardCellValue.CIRCLE,
+                victoryType = VictoryType.NONE,
+                hasWon = false,
+                hasDraw = false,
+            )
+        } else {
+            state = state.copy(
+                hintText = "Player 'X' turn.",
+                currentTurn = BoardCellValue.CROSS,
+                victoryType = VictoryType.NONE,
+                hasWon = false,
+                hasDraw = false,
+            )
+        }
     }
 
     private fun addValueToBoard(cellNo: Int) {
