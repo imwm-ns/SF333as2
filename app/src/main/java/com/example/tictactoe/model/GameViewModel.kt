@@ -113,9 +113,6 @@ class GameViewModel : ViewModel() {
         }
         // Try to random and place sign in the board.
         val emptyCells = boardItems.filter { it.value === BoardCellValue.NONE }.keys
-        if (emptyCells.isEmpty()) {
-            return
-        }
         val index = emptyCells.random()
         boardItems[index] = BoardCellValue.CROSS
         state = state.copy(
@@ -171,6 +168,13 @@ class GameViewModel : ViewModel() {
         }
         if (!hasBoardFull() && state.currentTurn === BoardCellValue.CROSS) {
             makeCrossComputerMove()
+            if (hasBoardFull()) {
+                state = state.copy(
+                    hintText = "Game Draw.",
+                    drawCount = state.drawCount + 1,
+                    hasDraw = true,
+                )
+            }
         }
     }
 
